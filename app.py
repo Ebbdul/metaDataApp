@@ -12,7 +12,6 @@ import psycopg2
 import warnings
 import pyodbc 
 import mysql.connector
-# import cx_Oracle
 warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
@@ -35,22 +34,15 @@ def DataBaseConnection(Query, DataBase, Address, Port, UserName, Password, Datab
             Connection =pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+Address+';DATABASE='+DatabaseName+';UID='+UserName+';PWD='+ Password)
     elif DataBase == "mysql":
         if DatabaseName != '':
-            Connection = mysql.connector.connect(host=Address, port=Port, user=UserName, password=Password, database=DatabaseName)
-        else:
             Connection = mysql.connector.connect( host=Address, port=Port, user=UserName, password=Password)
-    # elif DataBase == "oracle":
-    #     Dsn = cx_Oracle.makedsn(Address, Port, service_name='your_service_name')
-    #     if DatabaseName != '':
-    #         Connection = cx_Oracle.connect(UserName, Password, Dsn)
-    #     else:
-    #         Connection = cx_Oracle.connect(UserName, Password, Dsn)
+        else:
+            Connection = mysql.connector.connect( host=Address, port=Port, user=UserName, password=Password, database=DatabaseName)
     ResultedDataframe = QueryToDataFrame(Query, Connection)
     Connection.close()
     return ResultedDataframe
 
 def DatabaseList(ResultedDataframe):
-    ResultedDataframe.columns = ResultedDataframe.columns.str.lower()
-    return ResultedDataframe['database'].to_list()
+    return ResultedDataframe['databases'].to_list()
 
 def SchemaList(ResultedDataframe):
     return ResultedDataframe['schemas'].to_list()
@@ -78,7 +70,7 @@ def SearchFromProcedures(DataFrame, InputSearch):
         Lines = SearchStringFromProcedure(InputSearch, i['definition'])
         if len(Lines)>0:
             for idx, line in enumerate(Lines, start=1):
-                JsonData={'Type':i['type'],'Name':i['name'], 'Search_String':InputSearch, 'Exist':str(line)}
+                JsonData={'Type':i['type'],'Name':i['name'], 'String':InputSearch, 'Exist':str(line)}
                 ResponceDict.append(JsonData)
     return pd.DataFrame.from_dict(ResponceDict)
         
@@ -87,8 +79,6 @@ def FilterFromDB(DataBase, Address, Port, UserName, Password, DatabaseName, Inpu
     if DataBase == "postgres":
         Query = '''SELECT  CONCAT(r.routine_schema, '.', r.routine_name) AS Name,  pg_get_functiondef(p.oid) AS Definition,  'PROCEDURE' AS Type FROM information_schema.routines r JOIN pg_proc p ON r.routine_name = p.proname WHERE r.routine_type = 'PROCEDURE'  AND r.routine_schema NOT IN ('pg_catalog', 'information_schema') 
         union all
-        SELECT table_schema as Name, table_name as Definition, 'Schema' as Type FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema NOT IN ('pg_catalog', 'information_schema')
-        union all 
         SELECT  CONCAT(c.table_schema, '.', t.table_name) AS Name,  c.column_name AS Definition,'Table' AS Type FROM information_schema.columns c JOIN information_schema.tables t ON c.table_schema = t.table_schema AND c.table_name = t.table_name WHERE t.table_schema NOT LIKE 'pg_%' AND t.table_schema NOT LIKE 'information_schema'
         union all
         SELECT distinct CONCAT(r.routine_schema, '.', r.routine_name) AS Name,  pg_get_functiondef(p.oid) AS Definition,  'Function' AS Type FROM information_schema.routines r JOIN pg_proc p ON r.routine_name = p.proname WHERE r.routine_type = 'FUNCTION' AND r.routine_schema NOT IN ('pg_catalog', 'information_schema') 
@@ -98,8 +88,6 @@ def FilterFromDB(DataBase, Address, Port, UserName, Password, DatabaseName, Inpu
     elif DataBase == "sql_server":
         Query = '''SELECT CONCAT(SCHEMA_NAME(o.schema_id), '.', o.name) AS Name, m.definition AS Definition, 'PROCEDURE' AS Type FROM sys.objects AS o JOIN sys.sql_modules AS m ON o.object_id = m.object_id WHERE o.type = 'P'   
         UNION ALL
-        SELECT s.name AS Name, t.name AS Definition, 'Schema' as Type FROM sys.tables t INNER JOIN sys.schemas s ON t.schema_id = s.schema_id
-        UNION ALL
         SELECT CONCAT(SCHEMA_NAME(o.schema_id), '.', o.name) AS Name, c.name AS Definition, 'TABLE' AS Type FROM sys.objects AS o JOIN sys.columns AS c ON o.object_id = c.object_id WHERE o.type = 'U'
         UNION ALL
         SELECT CONCAT(SCHEMA_NAME(o.schema_id), '.', o.name) AS Name, m.definition AS Definition, 'FUNCTION' AS Type FROM sys.objects AS o JOIN sys.sql_modules AS m ON o.object_id = m.object_id WHERE o.type = 'FN'
@@ -107,8 +95,6 @@ def FilterFromDB(DataBase, Address, Port, UserName, Password, DatabaseName, Inpu
         SELECT CONCAT(SCHEMA_NAME(o.schema_id), '.', o.name) AS Name, m.definition AS Definition, 'VIEW' AS Type FROM sys.objects AS o JOIN sys.sql_modules AS m ON o.object_id = m.object_id WHERE o.type = 'V';  '''
     elif DataBase == "mysql":
         Query = ''' SELECT CONCAT(ROUTINE_SCHEMA, '.', ROUTINE_NAME) AS Name, ROUTINE_DEFINITION AS Definition,  'PROCEDURE' AS Type FROM information_schema.routines WHERE ROUTINE_TYPE = 'PROCEDURE'
-        union all
-        SELECT table_schema as Name, table_name AS Definition, 'Schema' as Type FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys')
         union all
         SELECT CONCAT(TABLE_SCHEMA, '.', TABLE_NAME) AS Name, COLUMN_NAME AS Definition, 'Table' AS Type FROM information_schema.columns WHERE TABLE_SCHEMA NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys')
         union all
@@ -138,13 +124,12 @@ def submit_main_form():
         Password=request.form['password']
         session['Password'] = Password
         if DataBase == "postgres":
-            Query = '''SELECT datname as "database" FROM pg_database WHERE datistemplate = false;'''
+            Query = '''SELECT datname as "databases" FROM pg_database WHERE datistemplate = false;'''
         elif DataBase == "sql_server":
-            Query = '''SELECT name as "database"  FROM sys.databases WHERE database_id > 4;'''
+            Query = '''SELECT name as "databases"  FROM sys.databases WHERE database_id > 4;'''
         elif DataBase == "mysql":
-            Query = ''' SHOW DATABASES; '''
+            Query = ''' SHOW DATABASES as "databases"; '''
         ResultedDataframe = DataBaseConnection(Query, DataBase, Address, Port, UserName, Password)
-        print(ResultedDataframe)
         DataBasesName = DatabaseList(ResultedDataframe)
         return jsonify({'status':'true','message':'Connection Successful','template':render_template('DataBaseList.html', dbName= DataBasesName)}) 
     except Exception as e:
@@ -233,7 +218,7 @@ def columns_view():
     elif DataBase == "sql_server":
         ColumnsQuery = ''' SELECT OBJECT_SCHEMA_NAME(c.object_id) AS SchemaName, OBJECT_NAME(c.object_id) AS TableName, c.name AS ColumnName, t.name AS DataType, c.max_length AS MaxLength, c.precision AS Precision, c.scale AS Scale, c.is_nullable AS IsNullable FROM sys.columns AS c JOIN sys.types AS t ON c.system_type_id = t.system_type_id AND c.user_type_id = t.user_type_id WHERE OBJECT_SCHEMA_NAME(c.object_id)='{}' and OBJECT_NAME(c.object_id) = '{}' '''.format(SchemaName, TableName)
     elif DataBase == "mysql":
-        ColumnsQuery = ''' SELECT     columns.COLUMN_NAME AS ColumnName,     columns.DATA_TYPE AS DataType,     columns.COLUMN_KEY AS ColumnKey,     key_usage.REFERENCED_TABLE_SCHEMA AS ReferencedSchema,     key_usage.REFERENCED_TABLE_NAME AS ReferencedTable,     key_usage.REFERENCED_COLUMN_NAME AS ReferencedColumn FROM     information_schema.columns AS columns LEFT JOIN     information_schema.key_column_usage AS key_usage ON     columns.TABLE_SCHEMA = key_usage.TABLE_SCHEMA     AND columns.TABLE_NAME = key_usage.TABLE_NAME     AND columns.COLUMN_NAME = key_usage.COLUMN_NAME WHERE     columns.TABLE_SCHEMA NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys')     and columns.TABLE_SCHEMA ='{}' and columns.TABLE_NAME='{}';'''.format(SchemaName, TableName)
+        ColumnsQuery = ''' SELECT COLUMN_NAME AS ColumnName, DATA_TYPE AS DataType, COLUMN_KEY AS ColumnKey, REFERENCED_TABLE_SCHEMA AS ReferencedSchema, REFERENCED_TABLE_NAME AS ReferencedTable, REFERENCED_COLUMN_NAME AS ReferencedColumn FROM information_schema.columns LEFT JOIN information_schema.key_column_usage ON columns.TABLE_SCHEMA = key_column_usage.TABLE_SCHEMA AND columns.TABLE_NAME = key_column_usage.TABLE_NAME AND columns.COLUMN_NAME = key_column_usage.COLUMN_NAME WHERE TABLE_SCHEMA NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys') and TABLE_SCHEMA ='{}' and TABLE_NAME='{}';'''.format(SchemaName, TableName)
     ColumnsDataFrame = DataBaseConnection(ColumnsQuery, DataBase, Address, Port, UserName, Password, DatabaseName)
     ColumnsTemp, ColumnNames = DataFrameToColNVal(ColumnsDataFrame)
     return jsonify({'status':'true','message':'Connection Successful','template':render_template('ColumnsInformation.html', ColumnsTemp=ColumnsTemp, ColumnNames=ColumnNames)}) 
