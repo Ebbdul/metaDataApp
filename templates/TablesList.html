@@ -1,0 +1,18 @@
+<table id="ModelTable" class="table table-striped dataTable dtr-inline removeTableborder">
+    <thead>
+    <tr>
+        {% for scol in SchemacolumnNames %}
+            <th>{{ scol }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for srecord in Schematemp %}
+    <tr>
+        {% for scol in SchemacolumnNames %}
+            <td> {{ srecord[scol] }} </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>

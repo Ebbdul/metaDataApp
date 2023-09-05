@@ -1,0 +1,236 @@
+*{  -moz-osx-font-smoothing: grayscale;  -webkit-font-smoothing: antialiased;  font-smoothing: antialiased;  font-weight: 400;}
+*{	font-family:calibri;	-webkit-font-family:calibri;	-moz-font-family:calibri;}
+
+@media (max-width:992px) { /****used in label on sm screen to pull left *********/
+	.form-horizontal .control-label { text-align: left !important;	}
+}
+	
+.font-bold{font-weight:700;}
+.padding-0{	padding:0px; }
+.pd_left_2{padding-left:2px;}
+.pd_right_2{padding-right:2px;}
+.padding-btm-20{ padding-bottom:20px; }
+.padding-btm{ padding-bottom:10px; }
+.padding-top-10px{ padding-top:10px; }
+.padding-top-20px{ padding-top:20px; }
+.font-normal{font-weight:normal;}	
+.margin-0{margin:0px; }
+.margin-10{margin:10px;}
+.mrgn_btm_10{margin-bottom:10px;}	
+.mrgn_btm_20{margin-bottom:20px;}
+.mrgn_top_10{margin-top:10px;}
+.mrgn_top_20{margin-top:20px;}
+.width_full{width:100% !important;}
+.padding-30px{padding:30px;}
+.row-flex {	display: flex;	flex-wrap: wrap;}
+ /* create margins in button for angular issue */
+.btn{margin-right:3px;}
+
+.modal-backdrop{	z-index: 10 !important; }
+
+.tab-content textarea{	resize: vertical; }
+
+.wrapper{	overflow-y:hidden; }
+
+.colorwhite{	color:white !important; }
+
+.no-margin{/********** used in custom pagination in datatabels ****************/
+	margin-bottom:10px !important;
+}
+.sidebar-collapse .sidebar-toggle:before{
+	content:'\f054' !important; font-size:12px;
+}
+.sidebar-expanded .sidebar-toggle-expand:before{
+	content:'\f053' !important; font-size:12px;
+}
+.btn-bs-file{  position:relative;}
+
+.sec-heading{		font-size: 26px;	font-weight:bold;}
+
+.thrd-heading{	font-size: 24px;	font-weight:bold;}
+
+.font-16px{	font-size:16px;}
+
+.main-title strong{	font-weight:700;	line-height:3;}
+
+.pnl-padding h3 {
+	color:white;
+}
+.pnl-padding .pnl-heading{ 	font-size:15px; }
+
+.pnl-padding .pnl-heading button i{ 
+	color:white; font-size:12px; padding:0px;
+}
+.pnl-padding .btn-group{ padding-top:3px; }
+
+.pnl-padding .btn-group button a i{ color:white; }
+
+ul .nav-tabs li .skn-bg-color a{ color:white; }
+
+/***Top bar menus to control width*********/
+.navbar-nav > .messages-menu > .dropdown-menu {	width: 280px; }
+	/**********multilevel menu ******/
+ .dropdown .dropdown-menu{	position:relative; }
+ 
+ .dropdown-menu > li .nestedul{	width:100% ;	border:0px; } 
+ 
+ .dropdown-menu > li .nestedul li{
+	padding:2px;	padding-left:30px;	border-bottom:1px solid gray;
+ }
+ .dropdown-menu > li .nestedul li:last-child{
+	 border-bottom:0px solid gray;
+ }
+ .dropdown-menu > li .nestedul li a{
+	 font-size:15px;	 padding:7px;
+ }
+ .dropdown-menu > li > a{
+	 color: #777 !important;
+ }
+ .dropdown-menu > li > a:hover{
+	color:black !important;	
+ }
+ .navbar-nav > .messages-menu > .dropdown-menu > li{
+	 border-bottom: 1px solid black;    padding-bottom: 10px;    padding-top: 10px;
+	 
+ }
+	/*******end of ***multilevel menu ******/
+	
+.box.box-solid.box-default > .box-header{
+	padding:5px !important;
+}
+.box-header > .fa, .box-header > .glyphicon, .box-header > .ion, .box-header .box-title{
+	color:white;	font-weight:normal;	font-size:18px;
+	padding-left:8px;	padding-top:6px;
+}
+.form-horizontal .form-group label, .form-horizontal .form-inline label{
+	font-weight:bold;	font-size:14px;
+}
+
+	/* tabs  */
+.nav-tabs-custom>.nav-tabs>li>a, .nav-tabs-custom>.nav-tabs>li>a:hover{
+	padding:7px !important;
+	font-size: 22px;
+}/* end tabs  */
+
+
+.login-box{ background:white; }
+
+.login-box-body{ background: #e2e2e2;}
+
+.login-box, .register-box {	margin: 6% auto; }
+
+/*************Index page First Heading Tooltip ********************/
+	/* tooltip at header  */
+.tooltip-inner {
+  background-color: #f3f3f3 !important;  text-align:left;  width: max-content;
+  color: black;  border:1px solid  #b3b3b3;
+} 
+.tooltip.bottom .tooltip-arrow {
+  border-bottom-color:#b3b3b3;
+}	/* tooltip at header  */
+.nav-tabs-custom > .nav-tabs > li.active > a,
+.nav-tabs-custom > .nav-tabs > li.active:hover > a {
+   font-size:22px;
+}
+.main-header .logo {  font-size: 28px; }
+
+.table-bordered {
+  /**font-size:16px;**/
+}
+
+/****************************************************
+													*
+Changes here for replaced original AdmiteLte.css	*
+													*
+****************************************************/
+.navbar-nav > .notifications-menu > .dropdown-menu > li.header{
+	font-size:16px;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li >div,
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li >div > a{
+	display: block;
+   /* Prevent text from breaking */
+  border-bottom: 1px solid #f4f4f4;
+  white-space: normal;   font-size:16px;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li>div:hover,
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li>div > a:hover{
+	background: #f4f4f4;
+    text-decoration: none;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li>div,
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li>div > a{
+	color: #444444;  overflow: hidden;
+  text-overflow: ellipsis;  padding: 10px;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li{
+	width:100%;
+}	
+.navbar-nav > .notifications-menu > .dropdown-menu > li.footer > a {
+  font-size: 16px;  text-align:left;
+  background:#F1F1F1;
+}
+@media (min-width: 768px) {
+  .sidebar-mini.sidebar-collapse .content-wrapper,
+  .sidebar-mini.sidebar-collapse .right-side,
+  .sidebar-mini.sidebar-collapse .main-footer {
+    margin-left: 0px !important;
+    z-index: 840;
+  }
+  .sidebar-mini.sidebar-expanded .content-wrapper,
+  .sidebar-mini.sidebar-expanded .right-side,
+  .sidebar-mini.sidebar-expanded .main-footer {
+    margin-left: 500px !important;
+    z-index: 840;
+  }
+  .sidebar-mini.sidebar-expanded .main-sidebar {
+    -webkit-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    -o-transform: translate(0, 0);
+    transform: translate(0, 0);
+    width: 500px !important;
+    z-index: 850;
+  }
+  .sidebar-mini.sidebar-collapse .main-sidebar {
+    -webkit-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    -o-transform: translate(0, 0);
+    transform: translate(0, 0);
+    width: 0px !important;
+    z-index: 850;
+  }
+}
+
+.text-right{	text-align:right;}
+
+.skn-child-bgcolor:hover{	color:white;	opacity:0.9;}
+
+/******* used in datatabels custom buttons ****/
+.skn-bg-color.btn_hover:hover{
+	color:white;
+}
+
+td .btn-xs{
+	margin:1px;
+}
+.box-header > .fa, .box-header > .glyphicon, .box-header > .ion, .box-header .box-title.heading{
+	color:black;	display: inline-block;    font-size: 18px;   
+	margin: 0;    line-height: 1;	padding:8px;
+}
+@media (min-width: 768px){
+	.form-inline .form-control {
+		display: inline-block;
+		width: 100%;
+		vertical-align: middle;
+	}
+}
+/* @media (max-width: 768px){
+	.form-inline .form-control {
+		display: inline-block;
+		width: auto;
+		vertical-align: middle;
+	}
+} */
+
+
+

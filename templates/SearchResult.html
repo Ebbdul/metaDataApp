@@ -1,0 +1,41 @@
+<br>
+<table id="ModelTable6" class="table table-striped dataTable dtr-inline removeTableborder">
+    <thead>
+    <tr>
+        {% for scol in SearchcolumnNames %}
+            <th>{{ scol }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for srecord in searchtemp %}
+    <tr>
+        {% for scol in SearchcolumnNames %}
+            <td> {{ srecord[scol] }} </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<script>
+    $('#ModelTable6').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+        "search": true,
+        "scrollY":true,
+      dom: 'Bfrtip',
+      buttons: [
+            { extend: "copy", className: "custom-button" },
+            { extend: "csv", className: "custom-button" },
+            { extend: "excel", className: "custom-button" },
+            { extend: "pdf", className: "custom-button" },
+            { extend: "print", className: "custom-button" }
+        ]
+
+      });
+</script>

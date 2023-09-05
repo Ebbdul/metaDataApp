@@ -1,0 +1,34 @@
+<script>
+    $('#Schema_name').on('change', function() {
+     var sh_name =$(this).val(); 
+  $.ajax({
+            type: "POST",
+            url: "/schema_data",
+            data:"sh_name="+sh_name,
+            success: function(data) {
+	 var answer = data.status;
+     if(answer == 'true')
+     {
+        $( '#sch_data_div').empty().append(data.template);
+     }
+	   else
+  {
+   $('#rl_ps_frm_err').html('<div class="alert alert-danger">'+data.message+'</div>');
+  }
+    }})
+})
+</script>
+<div class="mb-3">
+    <label for="Schema_name" class="form-label">Schema</label>
+    <select class="form-select" id="Schema_name" name="Schema_name">
+        <option value="" disabled selected>Please select schema</option>
+        {% for sh in shName %}
+        <option value= "{{ sh }}">{{ sh }}</option>
+        {% endfor %}
+    </select>
+    <div class="invalid-feedback">
+        Please enter a Schema name.
+    </div>
+</div>
+        <div id ="sch_data_div">
+        </div>

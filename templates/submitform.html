@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Metadata App</title>
+    <!-- Include Bootstrap CSS from a CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <!-- Include DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <!-- Include DataTables Buttons CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+    <!-- Include Bootstrap Icons CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.16.0/font/bootstrap-icons.css">
+
+<style>
+        /* Custom styles for the buttons */
+        .custom-button {
+            background-color: #fffff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<!--&lt;!&ndash; Navbar using Bootstrap &ndash;&gt;-->
+<!--<nav class="navbar navbar-expand-lg bg-body-tertiary">-->
+<!--  <div class="container-fluid">-->
+<!--    <a class="navbar-brand" href="/">Metadata</a>-->
+<!--    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">-->
+<!--      <span class="navbar-toggler-icon"></span>-->
+<!--    </button>-->
+<!--    <div class="collapse navbar-collapse" id="navbarSupportedContent">-->
+<!--      <ul class="navbar-nav me-auto mb-2 mb-lg-0">-->
+<!--        <li class="nav-item">-->
+<!--          <a class="nav-link active" aria-current="page" href="#" role="tab">Tables</a>-->
+<!--        </li>-->
+
+<!--          <li class="nav-item">-->
+<!--          <a class="nav-link" href="#">Views</a>-->
+<!--        </li>-->
+<!--          <li class="nav-item">-->
+<!--          <a class="nav-link" href="#">Procedures</a>-->
+<!--        </li>-->
+<!--          <li class="nav-item">-->
+<!--          <a class="nav-link" href="#">Users</a>-->
+<!--        </li>-->
+
+<!--      </ul>-->
+
+<!--    </div>-->
+<!--  </div>-->
+<!--</nav>-->
+<!--Nav and Tabs-->
+<!-- Navigation tabs -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Metadata</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+      </ul>
+
+    </div>
+  </div>
+</nav>
+<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="pills-schema-tab" data-bs-toggle="pill" data-bs-target="#pills-schema" type="button" role="tab" aria-controls="pills-schema" aria-selected="true">Schema</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-table-tab" data-bs-toggle="pill" data-bs-target="#pills-table" type="button" role="tab" aria-controls="pills-table" aria-selected="false">Tables</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-views-tab" data-bs-toggle="pill" data-bs-target="#pills-views" type="button" role="tab" aria-controls="pills-views" aria-selected="false">Views</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-procedure-tab" data-bs-toggle="pill" data-bs-target="#pills-procedure" type="button" role="tab" aria-controls="pills-procedure" aria-selected="false">Procedures and Functions</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-user-tab" data-bs-toggle="pill" data-bs-target="#pills-user" type="button" role="tab" aria-controls="pills-user" aria-selected="false">Users</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-search-tab" data-bs-toggle="pill" data-bs-target="#pills-search" type="button" role="tab" aria-controls="pills-search" aria-selected="false">Search</button>
+
+    </li>
+</ul>
+
+<!-- Content for the tabs -->
+<div class="tab-content" id="pills-tabContent">
+    <!-- Schema tab content -->
+    <div class="tab-pane fade show active" id="pills-schema" role="tabpanel" aria-labelledby="pills-schema-tab">
+        <div class="container">
+            <table id="ModelTable" class="table table-striped dataTable dtr-inline removeTableborder">
+                <thead>
+                <tr>
+                    {% for scol in SchemacolumnNames %}
+                        <th>{{ scol }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for srecord in Schematemp %}
+                <tr>
+                    {% for scol in SchemacolumnNames %}
+                        <td> {{ srecord[scol] }} </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Tables tab content -->
+    <div class="tab-pane fade" id="pills-table" role="tabpanel" aria-labelledby="pills-table-tab">
+        <div class="container">
+            <table id="ModelTable2" class="table table-striped dataTable dtr-inline removeTableborder">
+                <thead>
+                <tr>
+                    {% for tcol in TablecolumnNames %}
+                        <th>{{ tcol }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for trecord in Tabletemp %}
+                <tr>
+                    {% for tcol in TablecolumnNames %}
+                        <td> {{ trecord[tcol] }} </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Views tab content -->
+    <div class="tab-pane fade" id="pills-views" role="tabpanel" aria-labelledby="pills-views-tab">
+        <div class="container">
+            <table id="ModelTable3" class="table table-striped dataTable dtr-inline removeTableborder">
+                <thead>
+                <tr>
+                    {% for vcol in ViewcolumnNames %}
+                        <th>{{ vcol }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for vrecord in Viewtemp %}
+                <tr>
+                    {% for vcol in ViewcolumnNames %}
+                        <td> {{ vrecord[vcol] }} </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="pills-procedure" role="tabpanel" aria-labelledby="pills-procedure-tab">
+        <div class="container">
+             <table id="ModelTable4" class="table table-striped dataTable dtr-inline removeTableborder">
+                <thead>
+                <tr>
+                    {% for pcol in ProcedurecolumnNames %}
+                        <th>{{ pcol }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for precord in Proceduretemp %}
+                <tr>
+                    {% for pcol in ProcedurecolumnNames %}
+                        <td> {{ precord[pcol] }} </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="pills-user" role="tabpanel" aria-labelledby="pills-user-tab">
+        <div class="container">
+            <table id="ModelTable5" class="table table-striped dataTable dtr-inline removeTableborder">
+                <thead>
+                <tr>
+                    {% for ucol in UsercolumnNames %}
+                        <th>{{ ucol }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for urecord in Usertemp %}
+                <tr>
+                    {% for ucol in UsercolumnNames %}
+                        <td> {{ urecord[ucol] }} </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="pills-search" role="tabpanel" aria-labelledby="pills-search-tab">
+        <div class="container">
+
+            <form id="searchForm"  novalidate>
+ <div class="form-group row">
+    <label for="exampleInputEmail1" class="col-sm-4 col-form-label">Search From Procedure</label>
+    <div class="col-sm-6">
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Please Enter ...">
+    </div>
+    <div class="col-sm-2">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</div>
+
+
+
+</form>
+
+        </div>
+    </div>
+</div>
+<!-- Main content container -->
+
+<!-- Include jQuery (make sure it's included before DataTables and DataTables Buttons) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+<!-- Include DataTables Buttons JS -->
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.html5.min.js"></script>
+<script src="<script>https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/vfs_fonts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.print.min.js"></script>
+
+
+  <script>
+
+
+    $(document).ready(function () {
+
+      $('#ModelTable').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+        "search": true,
+        "scrollY":true,
+      dom: 'Bfrtip',
+      buttons: [
+            { extend: "copy", className: "custom-button" },
+            { extend: "csv", className: "custom-button" },
+            { extend: "excel", className: "custom-button" },
+            { extend: "pdf", className: "custom-button" },
+            { extend: "print", className: "custom-button" }
+        ]
+
+      });
+
+
+    });
+  </script>
+<script>
+
+
+    $(document).ready(function () {
+
+      $('#ModelTable2').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+        "search": true,
+        "scrollY":true,
+      dom: 'Bfrtip',
+      buttons: [
+            { extend: "copy", className: "custom-button" },
+            { extend: "csv", className: "custom-button" },
+            { extend: "excel", className: "custom-button" },
+            { extend: "pdf", className: "custom-button" },
+            { extend: "print", className: "custom-button" }
+        ]
+
+      });
+
+
+    });
+  </script>
+<script>
+
+
+    $(document).ready(function () {
+
+      $('#ModelTable3').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+        "search": true,
+        "scrollY":true,
+      dom: 'Bfrtip',
+      buttons: [
+            { extend: "copy", className: "custom-button" },
+            { extend: "csv", className: "custom-button" },
+            { extend: "excel", className: "custom-button" },
+            { extend: "pdf", className: "custom-button" },
+            { extend: "print", className: "custom-button" }
+        ]
+
+      });
+
+
+    });
+  </script>
+<script>
+
+
+    $(document).ready(function () {
+
+      $('#ModelTable4').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+        "search": true,
+        "scrollY":true,
+      dom: 'Bfrtip',
+      buttons: [
+            { extend: "copy", className: "custom-button" },
+            { extend: "csv", className: "custom-button" },
+            { extend: "excel", className: "custom-button" },
+            { extend: "pdf", className: "custom-button" },
+            { extend: "print", className: "custom-button" }
+        ]
+
+      });
+
+
+    });
+  </script>
+<script>
+
+
+    $(document).ready(function () {
+
+      $('#ModelTable5').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+        "search": true,
+        "scrollY":true,
+      dom: 'Bfrtip',
+      buttons: [
+            { extend: "copy", className: "custom-button" },
+            { extend: "csv", className: "custom-button" },
+            { extend: "excel", className: "custom-button" },
+            { extend: "pdf", className: "custom-button" },
+            { extend: "print", className: "custom-button" }
+        ]
+
+      });
+
+
+    });
+  </script>
+
+</body>
+</html>

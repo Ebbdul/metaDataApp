@@ -1,0 +1,35 @@
+<script>
+    $('#database_name').on('change', function() {
+     var db_name =$(this).val(); 
+  $.ajax({
+            type: "POST",
+            url: "/db_data",
+            data:"db_name="+db_name,
+            success: function(data) {
+	 var answer = data.status;
+     if(answer == 'true')
+     {
+        $( '#db_data_div').empty().append(data.template);
+        $('#rl_ps_frm_err').hide();
+     }
+	   else
+  {
+   $('#rl_ps_frm_err').html('<div class="alert alert-danger">'+data.message+'</div>');
+  }
+    }})
+})
+</script>
+        <div class="mb-3">
+            <label for="database_name" class="form-label">Database Name</label>
+            <select class="form-select" id="database_name" name="database_name">
+                <option value="" disabled selected>Select a database</option>
+                {% for db in dbName %}
+                <option value= "{{ db }}">{{ db }}</option>
+                {% endfor %}
+            </select>
+            <div class="invalid-feedback">
+                Please enter a database name.
+            </div>
+        </div>
+        <div id ="db_data_div">
+        </div>

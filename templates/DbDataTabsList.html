@@ -1,0 +1,360 @@
+<script type="text/javascript" src="{{ url_for('static', filename='dist/js/jquery-3.6.0.min.js') }}"></script>
+<!-- Content for the tabs -->
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='dist/css/all.css') }}" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='dist/css/all.min.css') }}">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='dist/css/bootstrap.min.css') }}">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='dist/css/adminlte.min.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='dist/js/bootstrap.bundle.min.js') }}"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+<!-- Include DataTables CSS -->
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='dist/css/jquery.dataTables.min.css') }}">
+<!-- Include DataTables Buttons CSS -->
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='dist/css/buttons.dataTables.min.css') }}">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='dist/css/adminlte.min.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
+
+<script>
+$('#searchForm').on('submit', function(event) {
+    event.preventDefault();
+    var form_data = $(this).serializeArray();
+    console.log(form_data);
+    $.ajax({
+        url: "{{ url_for('search_request') }}", // Fixed the URL and added a missing single quote
+        method: "POST",
+        data: form_data,
+        success: function(data) {
+            var answer = data.status;
+            if (answer == 'true') {
+                $('#serach_result_div').empty().append(data.template);
+            } else {
+                $('#sf_frm_err').html('<div class="alert alert-danger">' + data.message + '</div>');
+            }
+        }
+    });
+});
+
+$("#ModelTable2 .tbl-eye").click(function(e){
+  e.preventDefault();  
+
+    var currentRow = $(this).closest("tr");
+
+    var data = $('#ModelTable2').DataTable().row(currentRow).data();
+ var table_name = data[0];
+ $.ajax({
+            type: "POST",
+            url: "/columns_view",
+            data:"table_name="+table_name ,
+            success: function(data) {
+                console.log(data)
+                var answer = data.status;
+            if (answer == 'true') {			
+			 $( '#tbl_data' ).empty().append(data.template);
+			 $('#modal-xl').modal('show');
+            }
+}});
+
+});
+
+</script>
+
+<br>
+<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="pills-table-tab" data-bs-toggle="pill" data-bs-target="#pills-table" type="button" role="tab" aria-controls="pills-table" aria-selected="false">Tables</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-views-tab" data-bs-toggle="pill" data-bs-target="#pills-views" type="button" role="tab" aria-controls="pills-views" aria-selected="false">Views</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-function-tab" data-bs-toggle="pill" data-bs-target="#pills-function" type="button" role="tab" aria-controls="pills-function" aria-selected="true">Functions</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-procedure-tab" data-bs-toggle="pill" data-bs-target="#pills-procedure" type="button" role="tab" aria-controls="pills-procedure" aria-selected="false">Procedures</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-user-tab" data-bs-toggle="pill" data-bs-target="#pills-user" type="button" role="tab" aria-controls="pills-user" aria-selected="false">Users</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-search-tab" data-bs-toggle="pill" data-bs-target="#pills-search" type="button" role="tab" aria-controls="pills-search" aria-selected="false">Search</button>
+
+    </li>
+</ul>
+
+<!-- Content for the tabs -->
+<div class="tab-content" id="pills-tabContent">
+
+    <!-- Tables tab content -->
+    <div class="tab-pane fade show active" id="pills-table" role="tabpanel" aria-labelledby="pills-table-tab">
+        <div class="container">
+            <table id="ModelTable2" class="table table-striped dataTable dtr-inline removeTableborder">
+                <thead>
+                <tr>
+                    {% for tcol in TablecolumnNames %}
+                        <th>{{ tcol }}</th>
+                    {% endfor %}
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for trecord in Tabletemp %}
+                <tr>
+                    {% for tcol in TablecolumnNames %}
+                        <td> {{ trecord[tcol] }} </td>
+                    {% endfor %}
+                    <td><i class="fas fa-eye tbl-eye"></i></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Views tab content -->
+    <div class="tab-pane fade" id="pills-views" role="tabpanel" aria-labelledby="pills-views-tab">
+        <div class="container">
+            <table id="ModelTable3" class="table table-striped dataTable dtr-inline removeTableborder">
+                <thead>
+                <tr>
+                    {% for vcol in ViewcolumnNames %}
+                        <th>{{ vcol }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for vrecord in Viewtemp %}
+                <tr>
+                    {% for vcol in ViewcolumnNames %}
+                        <td> {{ vrecord[vcol] }} </td>
+                    {% endfor %}
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+        <!-- Schema tab content -->
+    <div class="tab-pane fade " id="pills-function" role="tabpanel" aria-labelledby="pills-function-tab">
+            <div class="container">
+                <table id="ModelTable" class="table table-striped dataTable dtr-inline removeTableborder">
+                    <thead>
+                    <tr>
+                        {% for fcol in FunctioncolumnNames %}
+                            <th>{{ fcol }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for frecord in Functiontemp %}
+                    <tr>
+                        {% for fcol in FunctioncolumnNames %}
+                            <td> {{ frecord[fcol] }} </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <div class="tab-pane fade" id="pills-procedure" role="tabpanel" aria-labelledby="pills-procedure-tab">
+        <div class="container">
+             <table id="ModelTable4" class="table table-striped dataTable dtr-inline removeTableborder">
+                <thead>
+                <tr>
+                    {% for pcol in ProcedurecolumnNames %}
+                        <th>{{ pcol }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for precord in Proceduretemp %}
+                <tr>
+                    {% for pcol in ProcedurecolumnNames %}
+                        <td> {{ precord[pcol] }} </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="pills-user" role="tabpanel" aria-labelledby="pills-user-tab">
+        <div class="container">
+            <table id="ModelTable5" class="table table-striped dataTable dtr-inline removeTableborder">
+                <thead>
+                <tr>
+                    {% for ucol in UsercolumnNames %}
+                        <th>{{ ucol }}</th>
+                    {% endfor %}
+                    
+                </tr>
+                </thead>
+                <tbody>
+                {% for urecord in Usertemp %}
+                <tr>
+                    {% for ucol in UsercolumnNames %}
+                        <td> {{ urecord[ucol] }} </td>
+                    {% endfor %}
+                
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="pills-search" role="tabpanel" aria-labelledby="pills-search-tab">
+        <div class="container">
+
+<form id="searchForm"  novalidate>
+ <div class="form-group row">
+    <span id="sf_frm_err"></span>
+    <div class="col-sm-10">
+        <input type="text" class="form-control" id="inputsearch" name="inputsearch" placeholder="Please Enter ...">
+    </div>
+    <div class="col-sm-2">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</div>
+
+</form>
+<div id ='serach_result_div'></div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-xl">
+    <div class="modal-dialog modal-xl">
+      <div id="" class="modal-content">
+        <div id ="tbl_data">
+        
+        
+        
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+
+
+<!-- Include DataTables JS -->
+<script type="text/javascript" src="{{ url_for('static', filename='dist/js/jquery.dataTables.js') }}"></script>
+<!-- Include DataTables Buttons JS -->
+<script type="text/javascript" src="{{ url_for('static', filename='dist/js/dataTables.buttons.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='dist/js/buttons.html5.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='dist/js/pdfmake.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='dist/js/vfs_fonts.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='dist/js/jszip.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='dist/js/buttons.print.min.js') }}"></script>
+<script>
+
+
+    $(document).ready(function () {
+
+      $('#ModelTable').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+        "search": true,
+        "scrollY":true,
+      dom: 'Bfrtip',
+      buttons: [
+            { extend: "copy", className: "custom-button" },
+            { extend: "csv", className: "custom-button" },
+            { extend: "excel", className: "custom-button" },
+            { extend: "pdf", className: "custom-button" },
+            { extend: "print", className: "custom-button" }
+        ]
+
+      });
+
+      $('#ModelTable2').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+        "search": true,
+        "scrollY":true,
+      dom: 'Bfrtip',
+      buttons: [
+            { extend: "copy", className: "custom-button" },
+            { extend: "csv", className: "custom-button" },
+            { extend: "excel", className: "custom-button" },
+            { extend: "pdf", className: "custom-button" },
+            { extend: "print", className: "custom-button" }
+        ]
+
+      });
+
+      $('#ModelTable3').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+        "search": true,
+        "scrollY":true,
+      dom: 'Bfrtip',
+      buttons: [
+            { extend: "copy", className: "custom-button" },
+            { extend: "csv", className: "custom-button" },
+            { extend: "excel", className: "custom-button" },
+            { extend: "pdf", className: "custom-button" },
+            { extend: "print", className: "custom-button" }
+        ]
+
+      });
+
+      
+      $('#ModelTable4').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+        "search": true,
+        "scrollY":true,
+      dom: 'Bfrtip',
+      buttons: [
+            { extend: "copy", className: "custom-button" },
+            { extend: "csv", className: "custom-button" },
+            { extend: "excel", className: "custom-button" },
+            { extend: "pdf", className: "custom-button" },
+            { extend: "print", className: "custom-button" }
+        ]
+
+      });
+
+      $('#ModelTable5').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+        "search": true,
+        "scrollY":true,
+      dom: 'Bfrtip',
+      buttons: [
+            { extend: "copy", className: "custom-button" },
+            { extend: "csv", className: "custom-button" },
+            { extend: "excel", className: "custom-button" },
+            { extend: "pdf", className: "custom-button" },
+            { extend: "print", className: "custom-button" }
+        ]
+
+      });
+    });
+  </script>
