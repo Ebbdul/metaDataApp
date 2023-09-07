@@ -1,1 +1,14 @@
+## Python Requirement
+
+1) flask 
+2) pandas
+3) psycopg2 
+4) pyodbc 
+5) mysql.connector
+
+
+## Jquery
+Data Tables css and js files
+
+## Bootstrap
 
